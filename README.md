@@ -308,5 +308,3 @@ This project is private and not licensed for public use.
 ---
 
 Built with ❤️ using Next.js
-#   S o c i a l - M e d i a  
- 
