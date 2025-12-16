@@ -307,4 +307,10 @@ This project is private and not licensed for public use.
 
 ---
 
+<<<<<<< HEAD:README.md
 Built with ❤️ using Next.js
+=======
+Built with ❤️ using Next.js
+ 
+ 
+>>>>>>> 210fa40168177d219a433c46fe9f3387fe5214ae:readme.md
