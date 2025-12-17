@@ -18,7 +18,7 @@ export default function LoginPage() {
     });
 
     if (res.ok) {
-      router.push("/home");
+      window.location.href = "/home";
     } else {
       alert("Invalid credentials");
     }

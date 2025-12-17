@@ -36,8 +36,10 @@ export async function POST(req: Request) {
     });
 
     const token = signToken(user._id.toString());
-
-    cookies().set("token", token, {
+    const cookieStore = await cookies();
+    
+    
+    cookieStore.set("token", token, {
       httpOnly: true,
       sameSite: "strict",
       maxAge: 60 * 60 * 24 * 7,
