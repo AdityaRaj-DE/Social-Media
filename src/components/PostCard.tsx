@@ -1,6 +1,18 @@
 import Image from "next/image";
+import LikeButton from "./LikeButton";
 
-export default function PostCard({ post }: { post: any }) {
+export default function PostCard({
+  post,
+  currentUserId,
+}: {
+  post: any;
+  currentUserId: string;
+}) {
+    const likedByUser = post.likes?.some(
+        (id: any) => id.toString() === currentUserId
+      );
+      
+
   return (
     <div className="border rounded p-4 space-y-2 bg-white">
       <div className="font-semibold">{post.user?.name}</div>
@@ -19,9 +31,11 @@ export default function PostCard({ post }: { post: any }) {
         />
       )}
 
-      <div className="text-xs text-gray-500">
-        {post.likes?.length || 0} likes
-      </div>
+      <LikeButton
+        postId={post._id.toString()}
+        initialLiked={likedByUser}
+        initialCount={post.likes?.length || 0}
+      />
     </div>
   );
 }

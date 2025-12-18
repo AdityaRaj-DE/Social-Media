@@ -45,8 +45,13 @@ export default async function HomePage() {
           )}
 
           {posts.map((post: any) => (
-            <PostCard key={post._id.toString()} post={post} />
+            <PostCard
+              key={post._id.toString()}
+              post={post}
+              currentUserId={user.id}
+            />
           ))}
+
         </section>
 
         <aside className="col-span-3 hidden md:block">
