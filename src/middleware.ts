@@ -1,55 +1,31 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET!;
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
+  const pathname = req.nextUrl.pathname;
 
-  // Public routes (no auth needed)
-  const publicPaths = [
-    "/login",
-    "/register",
-    "/api/auth/login",
-    "/api/auth/register",
-  ];
-
-  const isPublic = publicPaths.some((path) =>
-    req.nextUrl.pathname.startsWith(path)
-  );
-
-  if (isPublic) {
+  // ✅ Always allow auth pages & auth APIs
+  if (
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/register") ||
+    pathname.startsWith("/api/auth")
+  ) {
     return NextResponse.next();
   }
 
-  // Protect API routes & pages
+  // ✅ Protect everything else
   if (!token) {
-    if (req.nextUrl.pathname.startsWith("/api")) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    if (pathname.startsWith("/api")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  try {
-    jwt.verify(token, JWT_SECRET);
-    return NextResponse.next();
-  } catch {
-    if (req.nextUrl.pathname.startsWith("/api")) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
+  return NextResponse.next();
 }
+
 export const config = {
-    matcher: [
-      "/((?!_next|favicon.ico).*)",
-    ],
-  };
-  
+  matcher: ["/((?!_next|favicon.ico).*)"],
+};

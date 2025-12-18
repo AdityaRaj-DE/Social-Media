@@ -1,52 +1,56 @@
-import { connectDB } from "../../../../lib/db";
-import User from "../../../../models/User";
+import { connectDB } from "@/lib/db";
+import User from "@/models/User";
 import bcrypt from "bcryptjs";
-import { signToken } from "../../../../lib/auth";
+import { signToken } from "@/lib/auth";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { username, name, age, email, password } = await req.json();
+    const { email, password } = await req.json();
 
-    if (!username || !name || !email || !password || !age) {
-      return Response.json({ error: "All fields required" }, { status: 400 });
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "Missing credentials" },
+        { status: 400 }
+      );
     }
 
     await connectDB();
 
-    const exists = await User.findOne({
-      $or: [{ email }, { username }],
-    });
-
-    if (exists) {
-      return Response.json(
-        { error: "User already exists" },
-        { status: 409 }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-      username,
-      name,
-      age,
-      email,
-      password: hashedPassword,
-    });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      );
+    }
 
     const token = signToken(user._id.toString());
-    const cookieStore = await cookies();
-    
-    
-    cookieStore.set("token", token, {
+
+    const response = NextResponse.json({ success: true });
+
+    response.cookies.set("token", token, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
+      path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
 
-    return Response.json({ success: true });
+    return response;
   } catch (err) {
-    return Response.json({ error: "Server error" }, { status: 500 });
+    console.error("LOGIN ERROR:", err);
+    return NextResponse.json(
+      { error: "Server error" },
+      { status: 500 }
+    );
   }
 }

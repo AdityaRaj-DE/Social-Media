@@ -30,7 +30,8 @@ export async function POST(req: Request) {
     
     cookieStore.set("token", token, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
+      path: "/",              
       maxAge: 60 * 60 * 24 * 7,
     });
 
