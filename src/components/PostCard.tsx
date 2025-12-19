@@ -11,7 +11,9 @@ export default function PostCard({
   currentUserId: string;
 }) {
   const isOwner = post.user?._id === currentUserId;
+  console.log("isOwner =", post.user?.id === currentUserId);
 
+  
   const deletePost = async () => {
     const confirmDelete = confirm("Delete this post?");
     if (!confirmDelete) return;
@@ -34,6 +36,8 @@ export default function PostCard({
   return (
     <div className="border rounded p-4 space-y-2 bg-white relative">
       {/* Owner actions */}
+      {isOwner && <div className="absolute top-0 right-0 z-10 text-green-600">OWNER</div>}
+
       {isOwner && (
         <button
           onClick={deletePost}
@@ -60,9 +64,9 @@ export default function PostCard({
       )}
 
       <LikeButton
-        postId={post._id}
+        postId={post.id}
         initialLiked={likedByUser}
-        initialCount={post.likes?.length || 0}
+        initialCount={post.likes.length}
       />
     </div>
   );
