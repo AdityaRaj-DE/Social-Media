@@ -22,11 +22,31 @@ export default async function HomePage() {
   };
 
   await connectDB();
+const rawPosts = await Post.find()
+  .populate("user", "name profilePic")
+  .sort({ createdAt: -1 })
+  .lean();
 
-  const posts = await Post.find()
-    .populate("user", "name profilePic")
-    .sort({ createdAt: -1 })
-    .lean(); // 👈 already plain objects
+const posts = rawPosts.map((post: any) => ({
+  id: post._id.toString(),
+  content: post.content || "",
+  imageUrl: post.imageUrl || "",
+  likes: post.likes?.map((id: any) => id.toString()) || [],
+  createdAt: post.createdAt?.toISOString(),
+
+  user: post.user
+    ? {
+        id: post.user._id.toString(),
+        name: post.user.name,
+        profilePic:
+          post.user.profilePic &&
+          post.user.profilePic.startsWith("http")
+            ? post.user.profilePic
+            : "/default-avatar.png",
+      }
+    : null,
+}));
+
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -46,7 +66,7 @@ export default async function HomePage() {
 
           {posts.map((post: any) => (
             <PostCard
-              key={post._id.toString()}
+              key={post.id}
               post={post}
               currentUserId={user.id}
             />
