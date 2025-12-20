@@ -24,6 +24,7 @@ export default async function HomePage() {
   await connectDB();
 const rawPosts = await Post.find()
   .populate("user", "name profilePic")
+  .populate("comments.user", "_id name profilePic")
   .sort({ createdAt: -1 })
   .lean();
 
@@ -45,6 +46,21 @@ const posts = rawPosts.map((post: any) => ({
             : "/default-avatar.png",
       }
     : null,
+    comments:
+    post.comments?.map((c: any) => ({
+      id: c._id.toString(),
+      text: c.text,
+      createdAt: c.createdAt?.toISOString(),
+      isOwner: c.user?._id.toString() === user.id,
+      user: {
+        id: c.user._id.toString(),
+        name: c.user.name,
+        profilePic:
+          c.user.profilePic?.startsWith("http")
+            ? c.user.profilePic
+            : "/default-avatar.png",
+      },
+    })) || [],
 }));
 
 

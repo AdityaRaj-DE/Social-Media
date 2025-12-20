@@ -1,27 +1,37 @@
-import mongoose, { Schema, models } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
-const PostSchema = new Schema(
+const commentSchema = new Schema(
   {
     user: {
-      type: Schema.Types.ObjectId,
+      type: Types.ObjectId,
       ref: "User",
       required: true,
     },
-    content: {
+    text: {
       type: String,
+      required: true,
+      trim: true,
     },
-    imageUrl: {
-      type: String, // Cloudinary / URL later
-    },
-    likes: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
   },
   { timestamps: true }
 );
 
-const Post = models.Post || mongoose.model("Post", PostSchema);
-export default Post;
+const postSchema = new Schema(
+  {
+    user: {
+      type: Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    content: String,
+    imageUrl: String,
+    likes: [{ type: Types.ObjectId, ref: "User" }],
+
+    // ✅ COMMENTS
+    comments: [commentSchema],
+  },
+  { timestamps: true }
+);
+
+export default mongoose.models.Post ||
+  mongoose.model("Post", postSchema);

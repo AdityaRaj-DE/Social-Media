@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import LikeButton from "./LikeButton";
+import Comments from "./Comments";
 
 export default function PostCard({
   post,
@@ -82,6 +83,7 @@ export default function PostCard({
         initialLiked={likedByUser}
         initialCount={post.likes.length}
       />
+      <Comments postId={post.id} comments={post.comments} />
     </div>
   );
 }

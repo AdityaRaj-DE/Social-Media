@@ -25,8 +25,9 @@ export default async function ProfilePage() {
   await connectDB();
   const profileImage = user.profilePic && user.profilePic.startsWith("http") ? user.profilePic : "/default-avatar.svg";
 
-  const rawPosts = await Post.find({ user: user.id })
-  .populate("user", "_id name profilePic")
+  const rawPosts = await Post.find()
+  .populate("user", "name profilePic")
+  .populate("comments.user", "_id name profilePic")
   .sort({ createdAt: -1 })
   .lean();
 
@@ -37,7 +38,6 @@ const posts = rawPosts.map((post: any) => ({
   likes: post.likes?.map((id: any) => id.toString()) || [],
   createdAt: post.createdAt?.toISOString(),
   isOwner: post.user?._id.toString() === user.id,
-
   user: post.user
     ? {
         id: post.user._id.toString(),
@@ -49,6 +49,21 @@ const posts = rawPosts.map((post: any) => ({
             : "/default-avatar.png",
       }
     : null,
+    comments:
+    post.comments?.map((c: any) => ({
+      id: c._id.toString(),
+      text: c.text,
+      createdAt: c.createdAt?.toISOString(),
+      isOwner: c.user?._id.toString() === user.id,
+      user: {
+        id: c.user._id.toString(),
+        name: c.user.name,
+        profilePic:
+          c.user.profilePic?.startsWith("http")
+            ? c.user.profilePic
+            : "/default-avatar.png",
+      },
+    })) || [],
 }));
 
 
