@@ -30,6 +30,19 @@ const UserSchema = new Schema(
       type: String,
       default: "Default.jpeg",
     },
+    followers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    following: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    
   },
   { timestamps: true }
 );

@@ -5,6 +5,7 @@ import Post from "@/models/Post";
 import { getCurrentUser } from "@/lib/auth";
 import PostCard from "@/components/PostCard";
 import { Types } from "mongoose";
+import FollowButton from "@/components/FollowButton";
 
 export default async function UserProfilePage({
   params,
@@ -21,7 +22,7 @@ export default async function UserProfilePage({
   if (!Types.ObjectId.isValid(params.id)) {
     throw new Error("Invalid user id");
   }
-  
+
   // 1️⃣ Find profile owner
   const userDoc = await User.findById(params.id).lean();
   if (!userDoc) {
@@ -31,8 +32,10 @@ export default async function UserProfilePage({
       </div>
     );
   }
-  
 
+  const isFollowing = user.followers
+    .map((id: any) => id.toString())
+    .includes(currentUser.id);
   const profileUser = {
     id: userDoc._id.toString(),
     name: userDoc.name,
@@ -41,49 +44,53 @@ export default async function UserProfilePage({
       userDoc.profilePic?.startsWith("http")
         ? userDoc.profilePic
         : "/default-avatar.png",
+    followersCount: userDoc.followers.length,
+    followingCount: userDoc.following.length,
+    isFollowing,
   };
+
 
   // 2️⃣ Fetch that user's posts
   const rawPosts = await Post.find()
-  .populate("user", "name profilePic")
-  .populate("comments.user", "_id name profilePic")
-  .sort({ createdAt: -1 })
-  .lean();
+    .populate("user", "name profilePic")
+    .populate("comments.user", "_id name profilePic")
+    .sort({ createdAt: -1 })
+    .lean();
 
-const posts = rawPosts.map((post: any) => ({
-  id: post._id.toString(),
-  content: post.content || "",
-  imageUrl: post.imageUrl || "",
-  likes: post.likes?.map((id: any) => id.toString()) || [],
-  createdAt: post.createdAt?.toISOString(),
-  isOwner: post.user?._id.toString() === user.id,
-  user: post.user
-    ? {
+  const posts = rawPosts.map((post: any) => ({
+    id: post._id.toString(),
+    content: post.content || "",
+    imageUrl: post.imageUrl || "",
+    likes: post.likes?.map((id: any) => id.toString()) || [],
+    createdAt: post.createdAt?.toISOString(),
+    isOwner: post.user?._id.toString() === user.id,
+    user: post.user
+      ? {
         id: post.user._id.toString(),
         name: post.user.name,
         profilePic:
           post.user.profilePic &&
-          post.user.profilePic.startsWith("http")
+            post.user.profilePic.startsWith("http")
             ? post.user.profilePic
             : "/default-avatar.png",
       }
-    : null,
+      : null,
     comments:
-    post.comments?.map((c: any) => ({
-      id: c._id.toString(),
-      text: c.text,
-      createdAt: c.createdAt?.toISOString(),
-      isOwner: c.user?._id.toString() === user.id,
-      user: {
-        id: c.user._id.toString(),
-        name: c.user.name,
-        profilePic:
-          c.user.profilePic?.startsWith("http")
-            ? c.user.profilePic
-            : "/default-avatar.png",
-      },
-    })) || [],
-}));
+      post.comments?.map((c: any) => ({
+        id: c._id.toString(),
+        text: c.text,
+        createdAt: c.createdAt?.toISOString(),
+        isOwner: c.user?._id.toString() === user.id,
+        user: {
+          id: c.user._id.toString(),
+          name: c.user.name,
+          profilePic:
+            c.user.profilePic?.startsWith("http")
+              ? c.user.profilePic
+              : "/default-avatar.png",
+        },
+      })) || [],
+  }));
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -103,6 +110,10 @@ const posts = rawPosts.map((post: any) => ({
             <p className="text-sm text-gray-600">{profileUser.email}</p>
           </div>
         </div>
+        <FollowButton
+          userId={user.id}
+          initialFollowing={user.isFollowing}
+        />
 
         {/* User Posts */}
         <div className="space-y-4">

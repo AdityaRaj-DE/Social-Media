@@ -12,8 +12,10 @@ export default async function SearchPage({
     return <div className="p-6">Search something…</div>;
   }
 
-  const host = headers().get("host");
-  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  // 🔥 headers() IS ASYNC
+  const h = await headers();
+  const host = h.get("host");
+  const protocol =  "http";
   const baseUrl = `${protocol}://${host}`;
 
   const res = await fetch(
