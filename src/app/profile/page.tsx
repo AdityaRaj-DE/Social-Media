@@ -36,6 +36,7 @@ const posts = rawPosts.map((post: any) => ({
   imageUrl: post.imageUrl || "",
   likes: post.likes?.map((id: any) => id.toString()) || [],
   createdAt: post.createdAt?.toISOString(),
+  isOwner: post.user?._id.toString() === user.id,
 
   user: post.user
     ? {

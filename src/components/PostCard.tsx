@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import LikeButton from "./LikeButton";
 
@@ -10,15 +11,16 @@ export default function PostCard({
   post: any;
   currentUserId: string;
 }) {
-  const isOwner = post.user?._id === currentUserId;
-  console.log("isOwner =", post.user?.id === currentUserId);
+  const isOwner = post.isOwner;
 
-  
+
+
+
   const deletePost = async () => {
     const confirmDelete = confirm("Delete this post?");
     if (!confirmDelete) return;
 
-    const res = await fetch(`/api/posts/${post._id}`, {
+    const res = await fetch(`/api/posts/${post.id}`, {
       method: "DELETE",
     });
 
@@ -36,7 +38,6 @@ export default function PostCard({
   return (
     <div className="border rounded p-4 space-y-2 bg-white relative">
       {/* Owner actions */}
-      {isOwner && <div className="absolute top-0 right-0 z-10 text-green-600">OWNER</div>}
 
       {isOwner && (
         <button
@@ -47,7 +48,20 @@ export default function PostCard({
         </button>
       )}
 
-      <div className="font-semibold">{post.user?.name}</div>
+      {post.user && (
+        <Link
+          href={
+            post.user.id === currentUserId
+              ? "/profile"
+              : `/user/${post.user.id}`
+          }
+          className="font-semibold hover:underline"
+        >
+
+          {post.user.name}
+        </Link>
+      )}
+
 
       {post.content && (
         <p className="text-sm text-gray-800">{post.content}</p>
