@@ -44,32 +44,46 @@ export default async function UserProfilePage({
   };
 
   // 2️⃣ Fetch that user's posts
-  const rawPosts = await Post.find({ user: profileUser.id })
-    .populate("user", "_id name profilePic")
-    .sort({ createdAt: -1 })
-    .lean();
+  const rawPosts = await Post.find()
+  .populate("user", "name profilePic")
+  .populate("comments.user", "_id name profilePic")
+  .sort({ createdAt: -1 })
+  .lean();
 
-  // 3️⃣ Sanitize posts
-  const posts = rawPosts.map((post: any) => ({
-    id: post._id.toString(),
-    content: post.content || "",
-    imageUrl: post.imageUrl || "",
-    likes: post.likes?.map((id: any) => id.toString()) || [],
-    createdAt: post.createdAt?.toISOString(),
-
-    isOwner: post.user?._id.toString() === currentUser._id.toString(),
-
-    user: post.user
-      ? {
-          id: post.user._id.toString(),
-          name: post.user.name,
-          profilePic:
-            post.user.profilePic?.startsWith("http")
-              ? post.user.profilePic
-              : "/default-avatar.png",
-        }
-      : null,
-  }));
+const posts = rawPosts.map((post: any) => ({
+  id: post._id.toString(),
+  content: post.content || "",
+  imageUrl: post.imageUrl || "",
+  likes: post.likes?.map((id: any) => id.toString()) || [],
+  createdAt: post.createdAt?.toISOString(),
+  isOwner: post.user?._id.toString() === user.id,
+  user: post.user
+    ? {
+        id: post.user._id.toString(),
+        name: post.user.name,
+        profilePic:
+          post.user.profilePic &&
+          post.user.profilePic.startsWith("http")
+            ? post.user.profilePic
+            : "/default-avatar.png",
+      }
+    : null,
+    comments:
+    post.comments?.map((c: any) => ({
+      id: c._id.toString(),
+      text: c.text,
+      createdAt: c.createdAt?.toISOString(),
+      isOwner: c.user?._id.toString() === user.id,
+      user: {
+        id: c.user._id.toString(),
+        name: c.user.name,
+        profilePic:
+          c.user.profilePic?.startsWith("http")
+            ? c.user.profilePic
+            : "/default-avatar.png",
+      },
+    })) || [],
+}));
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">

@@ -32,6 +32,9 @@ const postSchema = new Schema(
   },
   { timestamps: true }
 );
+postSchema.index({
+  content: "text",
+});
 
 export default mongoose.models.Post ||
   mongoose.model("Post", postSchema);

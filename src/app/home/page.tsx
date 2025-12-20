@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
 import PostCard from "@/components/PostCard";
 import ProfileCard from "@/components/ProfileCard";
+import SearchBar from "@/components/SearchBar";
 
 export default async function HomePage() {
   const userDoc = await getCurrentUser();
@@ -72,7 +73,7 @@ const posts = rawPosts.map((post: any) => ({
         <aside className="col-span-3 hidden md:block">
           <ProfileCard user={user} />
         </aside>
-
+        <SearchBar />
         <section className="col-span-12 md:col-span-6 space-y-4">
           {posts.length === 0 && (
             <p className="text-center text-gray-500">
