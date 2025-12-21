@@ -2,37 +2,38 @@ import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import { signToken } from "@/lib/auth";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { username, name, age, email, password } = await req.json();
 
-    if (!email || !password) {
+    if (!username || !name || !age || !email || !password) {
       return NextResponse.json(
-        { error: "Missing credentials" },
+        { error: "All fields are required" },
         { status: 400 }
       );
     }
 
     await connectDB();
 
-    const user = await User.findOne({ email });
-    if (!user) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
+        { error: "User already exists" },
+        { status: 409 }
       );
     }
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
-    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      username,
+      name,
+      age,
+      email,
+      password: hashedPassword,
+    });
 
     const token = signToken(user._id.toString());
 
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
 
     return response;
   } catch (err) {
-    console.error("LOGIN ERROR:", err);
+    console.error("REGISTER ERROR:", err);
     return NextResponse.json(
       { error: "Server error" },
       { status: 500 }
