@@ -10,8 +10,15 @@ import FollowButton from "@/components/FollowButton";
 export default async function UserProfilePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
+
+  if (!Types.ObjectId.isValid(id)) {
+    throw new Error("Invalid user id");
+  }
+
+
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("Unauthorized");
@@ -19,12 +26,9 @@ export default async function UserProfilePage({
 
   await connectDB();
 
-  if (!Types.ObjectId.isValid(params.id)) {
-    throw new Error("Invalid user id");
-  }
 
   // 1️⃣ Find profile owner
-  const userDoc = await User.findById(params.id).lean();
+  const userDoc = await User.findById(id).lean();
   if (!userDoc) {
     return (
       <div className="p-6 text-center text-gray-600">
@@ -32,26 +36,38 @@ export default async function UserProfilePage({
       </div>
     );
   }
-
-  const isFollowing = user.followers
-    .map((id: any) => id.toString())
-    .includes(currentUser.id);
-  const profileUser = {
+  const user = {
     id: userDoc._id.toString(),
     name: userDoc.name,
     email: userDoc.email,
-    profilePic:
-      userDoc.profilePic?.startsWith("http")
-        ? userDoc.profilePic
-        : "/default-avatar.png",
-    followersCount: userDoc.followers.length,
-    followingCount: userDoc.following.length,
-    isFollowing,
+    age: userDoc.age,
+    profilePic: userDoc.profilePic,
+    followers: Array.isArray(userDoc.followers) ? userDoc.followers : [],
+    following: Array.isArray(userDoc.following) ? userDoc.following : [],
   };
+  
+  
+
+  const isFollowing = user.followers
+    .map((id: any) => id.toString())
+    .includes(currentUser._id.toString());
+    const profileUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      profilePic:
+        user.profilePic?.startsWith("http")
+          ? user.profilePic
+          : "/default-avatar.png",
+      followersCount: user.followers.length,
+      followingCount: user.following.length,
+      isFollowing,
+    };
+    
 
 
   // 2️⃣ Fetch that user's posts
-  const rawPosts = await Post.find()
+  const rawPosts = await Post.find({ user: id })
     .populate("user", "name profilePic")
     .populate("comments.user", "_id name profilePic")
     .sort({ createdAt: -1 })
@@ -110,10 +126,13 @@ export default async function UserProfilePage({
             <p className="text-sm text-gray-600">{profileUser.email}</p>
           </div>
         </div>
-        <FollowButton
-          userId={user.id}
-          initialFollowing={user.isFollowing}
-        />
+        {currentUser._id.toString() !== profileUser.id && (
+          <FollowButton
+            userId={profileUser.id}
+            initialFollowing={profileUser.isFollowing}
+          />
+        )}
+
 
         {/* User Posts */}
         <div className="space-y-4">
