@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  experimental: {
+    turbo: {
+      rules: {
+        "*.css": {
+          loaders: ["@tailwindcss/next"],
+        },
+      },
+    },
+  },
   images: {
     domains: ["res.cloudinary.com"],
   },

@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-   
+
 
     const res = await fetch("/api/auth/login", {
       method: "POST",
@@ -35,36 +35,44 @@ export default function LoginPage() {
 
   return (
     <MobileShell>
-      <div className="flex min-h-screen flex-col justify-center px-6">
+      <div className="bg-bg text-text p-6">
+        <div className="bg-red-500 text-white p-6">
+          TAILWIND TEST
+        </div>
+
+      </div>
+
+      <div className="flex min-h-screen flex-col justify-center px-6 bg-bg text-text">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-10"
         >
-          <h1 className="text-3xl font-semibold tracking-tight">
+          <h1 className="text-3xl font-bold tracking-tight">
             Welcome back
           </h1>
-          <p className="mt-2 text-sm opacity-60">
-            Sign in to your account
+          <p className="mt-2 text-sm text-muted">
+            Sign in to continue
           </p>
         </motion.div>
 
-        {/* Form Card */}
+        {/* Glass Card */}
         <form
           onSubmit={submit}
-          className="rounded-3xl border border-black/10 dark:border-white/10 bg-white dark:bg-black p-5 space-y-4"
+          className="glass rounded-card p-5 space-y-4"
         >
           <input
             type="email"
             placeholder="Email"
             className="
-              w-full rounded-2xl
-              bg-black/5 dark:bg-white/10
-              px-4 py-4 text-sm
+              w-full rounded-lg
+              bg-transparent
+              border border-glass
+              px-4 py-3 text-sm
+              placeholder:text-muted
               outline-none
-              focus:bg-black/10 dark:focus:bg-white/15
-              focus:ring-2 focus:ring-black dark:focus:ring-white
+              focus:ring-2 focus:ring-accent/40
               transition
             "
             onChange={(e) => setEmail(e.target.value)}
@@ -74,12 +82,13 @@ export default function LoginPage() {
             type="password"
             placeholder="Password"
             className="
-              w-full rounded-2xl
-              bg-black/5 dark:bg-white/10
-              px-4 py-4 text-sm
+              w-full rounded-lg
+              bg-transparent
+              border border-glass
+              px-4 py-3 text-sm
+              placeholder:text-muted
               outline-none
-              focus:bg-black/10 dark:focus:bg-white/15
-              focus:ring-2 focus:ring-black dark:focus:ring-white
+              focus:ring-2 focus:ring-accent/40
               transition
             "
             onChange={(e) => setPassword(e.target.value)}
@@ -88,10 +97,11 @@ export default function LoginPage() {
           <button
             type="submit"
             className="
-              w-full rounded-3xl
-              bg-black dark:bg-white
-              py-4 text-sm font-semibold
-              text-white dark:text-black
+              w-full rounded-pill
+              bg-accent
+              py-3 text-sm font-semibold
+              text-white
+              hover:bg-accent-600
               transition
               active:scale-[0.97]
             "
@@ -101,21 +111,25 @@ export default function LoginPage() {
         </form>
 
         {/* Footer */}
-        <div className="mt-8 flex justify-between text-xs opacity-60">
+        <div className="mt-8 flex justify-between text-xs text-muted">
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="hover:text-text transition"
             >
               {theme === "dark" ? "Light mode" : "Dark mode"}
             </button>
           )}
 
-
-          <button onClick={() => router.push("/register")}>
+          <button
+            onClick={() => router.push("/register")}
+            className="hover:text-accent transition"
+          >
             Create account
           </button>
         </div>
       </div>
     </MobileShell>
   );
+
 }

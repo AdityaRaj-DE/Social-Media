@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start --webpack",
     "lint": "eslint"
   },
   "dependencies": {
@@ -14,21 +14,23 @@
     "cookies-next": "^6.1.1",
     "framer-motion": "^12.23.26",
     "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^0.562.0",
     "mongoose": "^9.0.1",
     "next": "16.0.10",
     "next-themes": "^0.4.6",
+    "postcss": "^8.5.6",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.18",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.18",
     "typescript": "^5"
   }
 }
