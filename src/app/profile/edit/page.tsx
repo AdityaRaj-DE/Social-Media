@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import PostCard from "@/components/PostCard";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -68,41 +71,81 @@ export default function EditProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center p-6">
-      <div className="bg-white p-6 rounded w-full max-w-md space-y-4">
-        <h1 className="text-xl font-semibold">Edit Profile</h1>
-
+    <div className="min-h-screen bg-bg text-text flex justify-center px-4 py-10">
+      <div className="glass rounded-card w-full max-w-md p-6 space-y-4">
+        <h1 className="text-xl font-bold">Edit Profile</h1>
+  
         <input
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full border p-2 rounded"
+          className="
+            w-full
+            rounded-lg
+            bg-transparent
+            border border-glass
+            px-3 py-2
+            text-sm
+            placeholder:text-muted
+            outline-none
+            focus:ring-2 focus:ring-accent/40
+          "
         />
-
+  
         <input
           placeholder="Age"
           type="number"
           value={age}
           onChange={(e) => setAge(e.target.value)}
-          className="w-full border p-2 rounded"
+          className="
+            w-full
+            rounded-lg
+            bg-transparent
+            border border-glass
+            px-3 py-2
+            text-sm
+            placeholder:text-muted
+            outline-none
+            focus:ring-2 focus:ring-accent/40
+          "
         />
-
+  
         <input
           type="file"
           accept="image/*"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
+          className="text-sm text-muted"
         />
-
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-
+  
+        {error && (
+          <p className="text-sm text-red-500">{error}</p>
+        )}
+  
         <button
           onClick={submit}
           disabled={loading}
-          className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
+          className="
+            w-full
+            rounded-pill
+            bg-accent
+            py-2.5
+            text-sm font-semibold
+            text-white
+            hover:bg-accent-600
+            transition
+            disabled:opacity-50
+          "
         >
           {loading ? "Saving..." : "Save Changes"}
         </button>
+  
+        <Link
+          href="/profile"
+          className="block text-center text-sm text-muted hover:underline"
+        >
+          Cancel
+        </Link>
       </div>
     </div>
-  );
+  );  
 }

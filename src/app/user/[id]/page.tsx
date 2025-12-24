@@ -45,25 +45,25 @@ export default async function UserProfilePage({
     followers: Array.isArray(userDoc.followers) ? userDoc.followers : [],
     following: Array.isArray(userDoc.following) ? userDoc.following : [],
   };
-  
-  
+
+
 
   const isFollowing = user.followers
     .map((id: any) => id.toString())
     .includes(currentUser._id.toString());
-    const profileUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      profilePic:
-        user.profilePic?.startsWith("http")
-          ? user.profilePic
-          : "/default-avatar.png",
-      followersCount: user.followers.length,
-      followingCount: user.following.length,
-      isFollowing,
-    };
-    
+  const profileUser = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    profilePic:
+      user.profilePic?.startsWith("http")
+        ? user.profilePic
+        : "/default-avatar.png",
+    followersCount: user.followers.length,
+    followingCount: user.following.length,
+    isFollowing,
+  };
+
 
 
   // 2️⃣ Fetch that user's posts
@@ -109,37 +109,42 @@ export default async function UserProfilePage({
   }));
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-bg text-text px-4 py-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Profile Header */}
-        <div className="bg-white p-6 rounded flex items-center gap-6">
+        <div className="glass rounded-card p-6 flex items-center gap-6">
           <Image
-            src={profileUser.profilePic}
-            alt=""
-            width={100}
-            height={100}
-            className="rounded-full"
+            src={profileUser.profilePic || "/avatar-placeholder.png"}
+            alt="Profile"
+            width={96}
+            height={96}
+            className="rounded-full object-cover"
           />
 
-          <div>
-            <h1 className="text-xl font-semibold">{profileUser.name}</h1>
-            <p className="text-sm text-gray-600">{profileUser.email}</p>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold">
+              {profileUser.name}
+            </h1>
+            <p className="text-sm text-muted">
+              {profileUser.email}
+            </p>
           </div>
-        </div>
-        {currentUser._id.toString() !== profileUser.id && (
-          <FollowButton
-            userId={profileUser.id}
-            initialFollowing={profileUser.isFollowing}
-          />
-        )}
 
+          {/* Follow action */}
+          {currentUser._id.toString() !== profileUser.id && (
+            <FollowButton
+              userId={profileUser.id}
+              initialFollowing={profileUser.isFollowing}
+            />
+          )}
+        </div>
 
         {/* User Posts */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Posts</h2>
 
           {posts.length === 0 && (
-            <p className="text-gray-500">
+            <p className="text-sm text-muted">
               This user hasn’t posted anything yet.
             </p>
           )}

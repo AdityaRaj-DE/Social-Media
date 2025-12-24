@@ -35,13 +35,6 @@ export default function LoginPage() {
 
   return (
     <MobileShell>
-      <div className="bg-bg text-text p-6">
-        <div className="bg-red-500 text-white p-6">
-          TAILWIND TEST
-        </div>
-
-      </div>
-
       <div className="flex min-h-screen flex-col justify-center px-6 bg-bg text-text">
         {/* Header */}
         <motion.div

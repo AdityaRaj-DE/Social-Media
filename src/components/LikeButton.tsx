@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Heart } from "lucide-react";
 
 export default function LikeButton({
   postId,
@@ -45,11 +46,19 @@ export default function LikeButton({
     <button
       onClick={toggleLike}
       disabled={loading}
-      className={`flex items-center gap-2 text-sm ${
-        liked ? "text-red-500" : "text-gray-500"
-      }`}
+      className={`
+        flex items-center gap-2 text-sm
+        transition
+        ${liked ? "text-accent" : "text-muted"}
+        hover:text-accent
+      `}
     >
-      {liked ? "❤️" : "🤍"} {count}
+      <Heart
+        size={18}
+        className={liked ? "fill-current" : ""}
+      />
+      {count}
     </button>
   );
+  
 }

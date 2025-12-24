@@ -33,25 +33,34 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full">
       <form onSubmit={submitSearch}>
         <input
           value={q}
           onChange={(e) => handleChange(e.target.value)}
           placeholder="Search users or posts"
-          className="w-full border px-3 py-2 rounded"
+          className="
+            w-full
+            rounded-lg
+            bg-transparent
+            border border-glass
+            px-3 py-2
+            text-sm
+            placeholder:text-muted
+            outline-none
+            focus:ring-2 focus:ring-accent/40
+          "
         />
       </form>
 
-      {/* USER RESULTS DROPDOWN */}
       {users.length > 0 && (
-        <div className="absolute bg-white border w-full mt-1 rounded shadow z-50">
+        <div className="absolute mt-2 w-full glass rounded-card overflow-hidden z-50">
           {users.map((u) => (
             <Link
               key={u.id}
               href={`/user/${u.id}`}
-              className="block px-3 py-2 hover:bg-gray-100"
               onClick={() => setUsers([])}
+              className="block px-3 py-2 text-sm hover:bg-surface transition"
             >
               {u.name}
             </Link>

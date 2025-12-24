@@ -25,16 +25,26 @@ export default function UserSearch() {
         value={q}
         onChange={(e) => search(e.target.value)}
         placeholder="Search users..."
-        className="border px-3 py-2 w-full"
+        className="
+          w-full
+          rounded-lg
+          bg-transparent
+          border border-glass
+          px-3 py-2
+          text-sm
+          placeholder:text-muted
+          outline-none
+          focus:ring-2 focus:ring-accent/40
+        "
       />
 
       {results.length > 0 && (
-        <div className="absolute bg-white border w-full mt-1 z-10">
+        <div className="absolute mt-2 w-full glass rounded-card z-50">
           {results.map((u) => (
             <Link
               key={u.id}
               href={`/user/${u.id}`}
-              className="block px-3 py-2 hover:bg-gray-100"
+              className="block px-3 py-2 text-sm hover:bg-surface transition"
             >
               {u.name}
             </Link>

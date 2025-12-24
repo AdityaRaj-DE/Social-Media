@@ -37,18 +37,18 @@ export default function PostCard({
   const likedByUser = post.likes.includes(currentUserId);
 
   return (
-    <div className="border rounded p-4 space-y-2 bg-white relative">
-      {/* Owner actions */}
-
+    <div className="glass rounded-card p-4 space-y-3 relative">
+      {/* Owner action */}
       {isOwner && (
         <button
           onClick={deletePost}
-          className="absolute top-2 right-2 text-xs text-red-500"
+          className="absolute top-3 right-3 text-xs text-red-500 hover:underline"
         >
           Delete
         </button>
       )}
-
+  
+      {/* Author */}
       {post.user && (
         <Link
           href={
@@ -56,34 +56,41 @@ export default function PostCard({
               ? "/profile"
               : `/user/${post.user.id}`
           }
-          className="font-semibold hover:underline"
+          className="text-sm font-semibold hover:underline"
         >
-
           {post.user.name}
         </Link>
       )}
-
-
+  
+      {/* Content */}
       {post.content && (
-        <p className="text-sm text-gray-800">{post.content}</p>
+        <p className="text-sm leading-relaxed text-text">
+          {post.content}
+        </p>
       )}
-
+  
+      {/* Image */}
       {post.imageUrl?.startsWith("http") && (
         <Image
           src={post.imageUrl}
           alt=""
-          width={400}
-          height={400}
-          className="rounded"
+          width={600}
+          height={600}
+          className="rounded-lg mt-2"
         />
       )}
-
-      <LikeButton
-        postId={post.id}
-        initialLiked={likedByUser}
-        initialCount={post.likes.length}
-      />
+  
+      {/* Actions */}
+      <div className="flex items-center gap-6 pt-2">
+        <LikeButton
+          postId={post.id}
+          initialLiked={likedByUser}
+          initialCount={post.likes.length}
+        />
+      </div>
+  
+      {/* Comments */}
       <Comments postId={post.id} comments={post.comments} />
     </div>
-  );
+  );  
 }

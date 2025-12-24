@@ -2,6 +2,7 @@ import Image from "next/image";
 import { connectDB } from "@/lib/db";
 import Post from "@/models/Post";
 import { getCurrentUser } from "@/lib/auth";
+import Link from "next/link";
 
 import PostCard from "@/components/PostCard";
 
@@ -11,7 +12,7 @@ export default async function ProfilePage() {
     throw new Error("Unauthorized");
   }
 
- 
+
 
   // 🔒 sanitize user
   const user = {
@@ -26,71 +27,76 @@ export default async function ProfilePage() {
   const profileImage = user.profilePic && user.profilePic.startsWith("http") ? user.profilePic : "/default-avatar.svg";
 
   const rawPosts = await Post.find()
-  .populate("user", "name profilePic")
-  .populate("comments.user", "_id name profilePic")
-  .sort({ createdAt: -1 })
-  .lean();
+    .populate("user", "name profilePic")
+    .populate("comments.user", "_id name profilePic")
+    .sort({ createdAt: -1 })
+    .lean();
 
-const posts = rawPosts.map((post: any) => ({
-  id: post._id.toString(),
-  content: post.content || "",
-  imageUrl: post.imageUrl || "",
-  likes: post.likes?.map((id: any) => id.toString()) || [],
-  createdAt: post.createdAt?.toISOString(),
-  isOwner: post.user?._id.toString() === user.id,
-  user: post.user
-    ? {
+  const posts = rawPosts.map((post: any) => ({
+    id: post._id.toString(),
+    content: post.content || "",
+    imageUrl: post.imageUrl || "",
+    likes: post.likes?.map((id: any) => id.toString()) || [],
+    createdAt: post.createdAt?.toISOString(),
+    isOwner: post.user?._id.toString() === user.id,
+    user: post.user
+      ? {
         id: post.user._id.toString(),
         name: post.user.name,
         profilePic:
           post.user.profilePic &&
-          post.user.profilePic.startsWith("http")
+            post.user.profilePic.startsWith("http")
             ? post.user.profilePic
             : "/default-avatar.png",
       }
-    : null,
+      : null,
     comments:
-    post.comments?.map((c: any) => ({
-      id: c._id.toString(),
-      text: c.text,
-      createdAt: c.createdAt?.toISOString(),
-      isOwner: c.user?._id.toString() === user.id,
-      user: {
-        id: c.user._id.toString(),
-        name: c.user.name,
-        profilePic:
-          c.user.profilePic?.startsWith("http")
-            ? c.user.profilePic
-            : "/default-avatar.png",
-      },
-    })) || [],
-}));
+      post.comments?.map((c: any) => ({
+        id: c._id.toString(),
+        text: c.text,
+        createdAt: c.createdAt?.toISOString(),
+        isOwner: c.user?._id.toString() === user.id,
+        user: {
+          id: c.user._id.toString(),
+          name: c.user.name,
+          profilePic:
+            c.user.profilePic?.startsWith("http")
+              ? c.user.profilePic
+              : "/default-avatar.png",
+        },
+      })) || [],
+  }));
 
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-bg text-text px-4 py-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Profile Header */}
-        <div className="bg-white p-6 rounded flex items-center gap-6">
+        <div className="glass rounded-card p-6 flex items-center gap-6">
           <Image
-              src={profileImage}
-            alt=""
-            width={100}
-            height={100}
-            className="rounded-full"
+            src={profileImage || "/avatar-placeholder.png"}
+            alt="Profile"
+            width={96}
+            height={96}
+            className="rounded-full object-cover"
           />
 
-          <div>
-            <h1 className="text-xl font-semibold">{user.name}</h1>
-            <p className="text-sm text-gray-600">{user.email}</p>
-            <p className="text-sm text-gray-600">Age: {user.age}</p>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold">{user.name}</h1>
+            <p className="text-sm text-muted">{user.email}</p>
+            <p className="text-sm text-muted">Age: {user.age}</p>
 
-            <a
+            <Link
               href="/profile/edit"
-              className="inline-block mt-2 text-sm underline"
+              className="
+              inline-block mt-3
+              text-sm font-medium
+              text-accent
+              hover:underline
+            "
             >
               Edit Profile
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -99,7 +105,9 @@ const posts = rawPosts.map((post: any) => ({
           <h2 className="text-lg font-semibold">Your Posts</h2>
 
           {posts.length === 0 && (
-            <p className="text-gray-500">You haven’t posted anything yet.</p>
+            <p className="text-sm text-muted">
+              You haven’t posted anything yet.
+            </p>
           )}
 
           {posts.map((post: any) => (
@@ -113,4 +121,5 @@ const posts = rawPosts.map((post: any) => ({
       </div>
     </div>
   );
+
 }

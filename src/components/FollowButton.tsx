@@ -32,11 +32,21 @@ export default function FollowButton({
     <button
       onClick={toggleFollow}
       disabled={loading}
-      className={`px-4 py-1 rounded text-sm ${
-        following ? "bg-gray-300" : "bg-blue-600 text-white"
-      }`}
+      className={`
+        rounded-pill
+        px-4 py-1.5
+        text-sm font-medium
+        transition
+        active:scale-95
+        ${
+          following
+            ? "border border-glass text-text hover:bg-surface"
+            : "bg-accent text-white hover:bg-accent-600"
+        }
+        disabled:opacity-50
+      `}
     >
       {following ? "Following" : "Follow"}
     </button>
-  );
+  );  
 }

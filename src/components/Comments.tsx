@@ -32,38 +32,64 @@ export default function Comments({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="pt-3 space-y-3">
       {comments.map((c) => (
-        <div key={c.id} className="text-sm flex justify-between">
-          <span>
-            <b>{c.user.name}:</b> {c.text}
-          </span>
-
+        <div
+          key={c.id}
+          className="flex justify-between items-start text-sm"
+        >
+          <p className="text-text">
+            <span className="font-semibold">
+              {c.user.name}
+            </span>{" "}
+            <span className="text-muted">{c.text}</span>
+          </p>
+  
           {c.isOwner && (
             <button
               onClick={() => deleteComment(c.id)}
-              className="text-red-500 text-xs"
+              className="text-xs text-red-500 hover:underline"
             >
               Delete
             </button>
           )}
         </div>
       ))}
-
-      <div className="flex gap-2 mt-2">
+  
+      {/* Add comment */}
+      <div className="flex gap-2 pt-2">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Add a comment"
-          className="border px-2 py-1 text-sm flex-1"
+          placeholder="Add a comment…"
+          className="
+            flex-1
+            rounded-lg
+            bg-transparent
+            border border-glass
+            px-3 py-2
+            text-sm
+            placeholder:text-muted
+            outline-none
+            focus:ring-2 focus:ring-accent/40
+          "
         />
+  
         <button
           onClick={addComment}
-          className="text-sm bg-black text-white px-3"
+          className="
+            rounded-pill
+            bg-accent
+            px-4 py-2
+            text-sm font-medium
+            text-white
+            hover:bg-accent-600
+            transition
+          "
         >
           Post
         </button>
       </div>
     </div>
-  );
+  );  
 }
