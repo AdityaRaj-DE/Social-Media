@@ -51,6 +51,6 @@ UserSchema.index({
   name: "text",
   email: "text",
 });
-
+UserSchema.index({ email: 1 });
 const User = models.User || mongoose.model("User", UserSchema);
 export default User;

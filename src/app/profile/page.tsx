@@ -26,11 +26,12 @@ export default async function ProfilePage() {
   await connectDB();
   const profileImage = user.profilePic && user.profilePic.startsWith("http") ? user.profilePic : "/default-avatar.svg";
 
-  const rawPosts = await Post.find()
-    .populate("user", "name profilePic")
-    .populate("comments.user", "_id name profilePic")
-    .sort({ createdAt: -1 })
-    .lean();
+  const rawPosts = await Post.find({ user: user.id })
+  .populate("user", "name profilePic")
+  .populate("comments.user", "_id name profilePic")
+  .sort({ createdAt: -1 })
+  .lean();
+
 
   const posts = rawPosts.map((post: any) => ({
     id: post._id.toString(),
