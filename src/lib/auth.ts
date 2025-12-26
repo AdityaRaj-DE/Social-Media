@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import User from "../models/User";
 import { connectDB } from "./db";
 
@@ -19,7 +19,15 @@ export function verifyToken(token: string) {
 
 export async function getCurrentUser() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
+  const cookieToken = cookieStore.get("token")?.value;
+  const headersList = await headers();
+  const authHeader = headersList.get("authorization");
+const bearerToken = authHeader?.startsWith("Bearer ")
+  ? authHeader.slice(7)
+  : null;
+
+const token = bearerToken || cookieToken;
+
 
   if (!token) return null;
 
