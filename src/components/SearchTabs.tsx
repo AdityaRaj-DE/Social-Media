@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 import UserResults from "./UserResults";
 import PostResults from "./PostResults";
 
 export default function SearchTabs() {
   const [q, setQ] = useState("");
   const [tab, setTab] = useState<"users" | "posts">("users");
+
+  const debouncedQ = useDebounce(q, 300);
 
   return (
     <>
@@ -42,12 +45,14 @@ export default function SearchTabs() {
       </div>
 
       {/* Results */}
-      {q.length < 2 ? (
-        <p className="text-sm text-muted pt-4">Type at least 2 characters</p>
+      {debouncedQ.length < 2 ? (
+        <p className="text-sm text-muted pt-4">
+          Type at least 2 characters
+        </p>
       ) : tab === "users" ? (
-        <UserResults q={q} />
+        <UserResults q={debouncedQ} />
       ) : (
-        <PostResults q={q} />
+        <PostResults q={debouncedQ} />
       )}
     </>
   );

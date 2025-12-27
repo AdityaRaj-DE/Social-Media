@@ -1,7 +1,7 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import UserSkeleton from "./UserSkeleton";
 
 export default function UserResults({ q }: { q: string }) {
   const [results, setResults] = useState<any[]>([]);
@@ -25,7 +25,13 @@ export default function UserResults({ q }: { q: string }) {
   }, [q]);
 
   if (loading) {
-    return <p className="text-sm text-muted pt-4">Searching users…</p>;
+    return (
+      <div className="glass rounded-card divide-y divide-glass mt-4">
+        {[...Array(5)].map((_, i) => (
+          <UserSkeleton key={i} />
+        ))}
+      </div>
+    );
   }
 
   if (results.length === 0) {
@@ -38,9 +44,32 @@ export default function UserResults({ q }: { q: string }) {
         <Link
           key={u.id}
           href={`/user/${u.id}`}
-          className="block px-4 py-3 hover:bg-surface transition text-sm"
+          className="
+            flex items-center gap-3 px-4 py-3
+            hover:bg-surface transition
+            active:scale-[0.98]
+          "
         >
-          {u.name}
+          {/* Avatar */}
+          <Image
+            src={u.profilePic || "/avatar-placeholder.png"}
+            alt={u.name}
+            width={36}
+            height={36}
+            className="rounded-full object-cover"
+          />
+
+          {/* Text */}
+          <div className="flex flex-col leading-tight">
+            <span className="text-sm font-medium text-text">
+              {u.name}
+            </span>
+
+            {/* Placeholder for future */}
+            <span className="text-xs text-muted">
+              View profile
+            </span>
+          </div>
         </Link>
       ))}
     </div>

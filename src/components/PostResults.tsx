@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import PostCard from "@/components/PostCard";
+import PostSkeleton from "./PostSkeleton";
 
 export default function PostResults({ q }: { q: string }) {
   const [posts, setPosts] = useState<any[]>([]);
@@ -42,7 +43,13 @@ export default function PostResults({ q }: { q: string }) {
   }, [q]);
 
   if (loading) {
-    return <p className="text-sm text-muted pt-4">Searching posts…</p>;
+    return (
+      <div className="space-y-4 pt-4">
+        {[...Array(3)].map((_, i) => (
+          <PostSkeleton key={i} />
+        ))}
+      </div>
+    );
   }
 
   if (posts.length === 0) {
