@@ -2,7 +2,6 @@ import { connectDB } from "@/lib/db";
 import Post from "@/models/Post";
 import { getCurrentUser } from "@/lib/auth";
 
-import Navbar from "@/components/Navbar";
 import PostCard from "@/components/PostCard";
 import ProfileCard from "@/components/ProfileCard";
 import SearchBar from "@/components/SearchBar";
@@ -67,7 +66,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-bg text-text">
-      <Navbar user={user} />
+      
 
       <main className="max-w-6xl mx-auto grid grid-cols-12 gap-6 px-4 py-6">
         {/* Left Sidebar */}

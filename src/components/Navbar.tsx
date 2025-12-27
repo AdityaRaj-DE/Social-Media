@@ -1,70 +1,79 @@
 "use client";
-import Link from "next/link";
-import Image from "next/image";
 
-export default function Navbar({ user }: { user: any }) {
-  const logout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    window.location.href = "/login";
-  };
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  Home,
+  Search,
+  PlusSquare,
+  User,
+  Settings,
+} from "lucide-react";
+
+const navItems = [
+  { href: "/", icon: Home, label: "Home" },
+  { href: "/search", icon: Search, label: "Search" },
+  { href: "/create-post", icon: PlusSquare, label: "Create", primary: true },
+  { href: "/profile", icon: User, label: "Profile" },
+  { href: "/settings", icon: Settings, label: "Settings" },
+];
+
+export default function BottomNav() {
+  const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-50 glass border-b border-glass">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
-        {/* Brand */}
-        <Link href="/" className="text-lg font-bold tracking-tight">
-          Social<span className="text-accent">Media</span>
-        </Link>
-        <Link
-          href="/create-post"
-          className="
-    rounded-pill
-    bg-accent
-    px-4 py-1.5
-    text-sm font-semibold
-    text-white
-    hover:bg-accent-600
-    transition
-  "
-        >
-          Create
-        </Link>
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass border-t border-glass">
+      <div className="flex justify-around items-center h-14">
+        {navItems.map(({ href, icon: Icon, label, primary }) => {
+          const active = pathname === href;
 
-        {/* Right actions */}
-        <div className="flex items-center gap-4">
-          {/* Profile */}
-          <Link
-            href="/profile"
-            className="flex items-center gap-2 hover:opacity-90 transition"
-          >
-            <Image
-              src={user.profileImage || "/avatar-placeholder.png"}
-              alt="Profile"
-              width={32}
-              height={32}
-              className="rounded-full object-cover"
-            />
-            <span className="text-sm font-medium text-text hidden sm:block">
-              {user.name}
-            </span>
-          </Link>
+          if (primary) {
+            return (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center justify-center -mt-6"
+              >
+                <div
+                  className="
+            h-12 w-12
+            rounded-full
+            bg-accent
+            text-white
+            flex items-center justify-center
+            shadow-lg
+            active:scale-95
+            transition
+          "
+                >
+                  <Icon size={26} />
+                </div>
+              </Link>
+            );
+          }
 
-          {/* Logout */}
-          <button
-            onClick={logout}
-            className="
-              rounded-pill
-              px-4 py-1.5
-              text-sm
-              border border-glass
-              hover:bg-surface
-              transition
-              active:scale-95
-            "
-          >
-            Logout
-          </button>
-        </div>
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`relative flex flex-col items-center justify-center text-xs transition-all duration-200
+        ${active ? "text-accent" : "text-muted hover:text-text"}
+      `}
+            >
+              <Icon
+                size={22}
+                className={`transition-transform duration-200
+          ${active ? "scale-110 -translate-y-0.5" : ""}
+        `}
+              />
+              <span>{label}</span>
+              {active && (
+                <span className="absolute -bottom-1 h-1 w-1 rounded-full bg-accent" />
+              )}
+            </Link>
+          );
+        })}
+
       </div>
     </nav>
   );
