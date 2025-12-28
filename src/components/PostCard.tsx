@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import LikeButton from "./LikeButton";
 import Comments from "./Comments";
+import { timeAgo } from "@/utils/timeAgo";
 
 export default function PostCard({
   post,
@@ -12,85 +14,94 @@ export default function PostCard({
   post: any;
   currentUserId: string;
 }) {
-  const isOwner = post.isOwner;
+  const [showComments, setShowComments] = useState(false);
 
-
-
-
-  const deletePost = async () => {
-    const confirmDelete = confirm("Delete this post?");
-    if (!confirmDelete) return;
-
-    const res = await fetch(`/api/posts/${post.id}`, {
-      method: "DELETE",
-    });
-
-    if (!res.ok) {
-      alert("Failed to delete post");
-      return;
-    }
-
-    // simplest reliable update
-    window.location.reload();
-  };
-
-  const likedByUser = post.likes.includes(currentUserId);
+  const likedByUser =
+    Array.isArray(post.likes) && currentUserId
+      ? post.likes.includes(currentUserId)
+      : false;
 
   return (
-    <div className="glass rounded-card p-4 space-y-3 relative">
-      {/* Owner action */}
-      {isOwner && (
-        <button
-          onClick={deletePost}
-          className="absolute top-3 right-3 text-xs text-red-500 hover:underline"
-        >
-          Delete
-        </button>
-      )}
-  
-      {/* Author */}
-      {post.user && (
+    <div className="glass rounded-card p-4 space-y-3">
+      {/* HEADER */}
+      <div className="flex items-center justify-between">
         <Link
           href={
             post.user.id === currentUserId
               ? "/profile"
               : `/user/${post.user.id}`
           }
-          className="text-sm font-semibold hover:underline"
+          className="flex items-center gap-3"
         >
-          {post.user.name}
+          <Image
+            src={post.user.profilePic}
+            alt={post.user.name}
+            width={36}
+            height={36}
+            className="rounded-full object-cover"
+          />
+          <div className="flex flex-col leading-tight">
+            <span className="text-sm font-semibold text-text">
+              {post.user.name}
+            </span>
+            <span className="text-xs text-muted">
+              {timeAgo(post.createdAt)}
+            </span>
+          </div>
         </Link>
-      )}
-  
-      {/* Content */}
+      </div>
+
+      {/* CONTENT */}
       {post.content && (
         <p className="text-sm leading-relaxed text-text">
           {post.content}
         </p>
       )}
-  
-      {/* Image */}
-      {post.imageUrl?.startsWith("http") && (
+
+      {/* IMAGE */}
+      {post.imageUrl && (
         <Image
           src={post.imageUrl}
           alt=""
           width={600}
           height={600}
-          className="rounded-lg mt-2"
+          className="rounded-lg w-full object-cover"
         />
       )}
-  
-      {/* Actions */}
+
+      {/* ACTIONS */}
       <div className="flex items-center gap-6 pt-2">
         <LikeButton
           postId={post.id}
           initialLiked={likedByUser}
           initialCount={post.likes.length}
         />
+
+        <button
+          onClick={() => setShowComments((v) => !v)}
+          className="flex items-center gap-1 text-sm text-muted hover:text-text transition"
+        >
+          💬
+          <span>{post.commentsCount ?? 0}</span>
+        </button>
       </div>
-  
-      {/* Comments */}
-      <Comments postId={post.id} comments={post.comments} />
+
+      {/* COUNTS (SECONDARY INFO) */}
+      {(post.likes.length > 0 || post.commentsCount > 0) && (
+        <div className="text-xs text-muted flex gap-4">
+          {post.likes.length > 0 && (
+            <span>{post.likes.length} likes</span>
+          )}
+          {post.commentsCount > 0 && (
+            <span>{post.commentsCount} comments</span>
+          )}
+        </div>
+      )}
+
+      {/* COMMENTS (LAZY) */}
+      {showComments && (
+        <Comments postId={post.id} />
+      )}
     </div>
-  );  
+  );
 }

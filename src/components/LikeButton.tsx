@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+
 import { Heart } from "lucide-react";
+import { useState } from "react";
 
 export default function LikeButton({
   postId,
@@ -19,11 +20,13 @@ export default function LikeButton({
   const toggleLike = async () => {
     if (loading) return;
 
-    setLoading(true);
+    // 🔥 optimistic update
+    const prevLiked = liked;
+    const prevCount = count;
 
-    // Optimistic UI update
-    setLiked(!liked);
-    setCount((prev) => (liked ? prev - 1 : prev + 1));
+    setLiked(!prevLiked);
+    setCount(prevLiked ? count - 1 : count + 1);
+    setLoading(true);
 
     try {
       const res = await fetch(`/api/posts/${postId}/like`, {
@@ -33,10 +36,10 @@ export default function LikeButton({
       if (!res.ok) {
         throw new Error("Like failed");
       }
-    } catch {
-      // Rollback on failure
-      setLiked(liked);
-      setCount((prev) => (liked ? prev + 1 : prev - 1));
+    } catch (e) {
+      // ❌ rollback
+      setLiked(prevLiked);
+      setCount(prevCount);
     } finally {
       setLoading(false);
     }
@@ -45,20 +48,14 @@ export default function LikeButton({
   return (
     <button
       onClick={toggleLike}
-      disabled={loading}
-      className={`
-        flex items-center gap-2 text-sm
-        transition
-        ${liked ? "text-accent" : "text-muted"}
-        hover:text-accent
+      className={`flex items-center gap-1 text-sm transition
+        ${liked ? "text-accent" : "text-muted hover:text-text"}
       `}
     >
       <Heart
         size={18}
         className={liked ? "fill-current" : ""}
-      />
-      {count}
+      /> <span>{count}</span>
     </button>
   );
-  
 }

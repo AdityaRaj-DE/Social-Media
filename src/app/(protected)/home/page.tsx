@@ -3,8 +3,7 @@ import Post from "@/models/Post";
 import { getCurrentUser } from "@/lib/auth";
 
 import PostCard from "@/components/PostCard";
-import ProfileCard from "@/components/ProfileCard";
-import SearchBar from "@/components/SearchBar";
+import Feed from "@/components/Feed";
 
 export default async function HomePage() {
   const userDoc = await getCurrentUser();
@@ -22,11 +21,14 @@ export default async function HomePage() {
   };
 
   await connectDB();
-  const rawPosts = await Post.find()
-    .populate("user", "name profilePic")
-    .populate("comments.user", "_id name profilePic")
-    .sort({ createdAt: -1 })
-    .lean();
+  const PAGE_SIZE = 10;
+
+const rawPosts = await Post.find()
+  .sort({ createdAt: -1 })
+  .limit(PAGE_SIZE)
+  .populate("user", "name profilePic")
+  .lean();
+
 
   const posts = rawPosts.map((post: any) => ({
     id: post._id.toString(),
@@ -65,45 +67,8 @@ export default async function HomePage() {
 
 
   return (
-    <div className="min-h-screen bg-bg text-text">
-      
-
-      <main className="max-w-6xl mx-auto grid grid-cols-12 gap-6 px-4 py-6">
-        {/* Left Sidebar */}
-        <aside className="col-span-3 hidden md:block">
-          <div className="glass rounded-card p-4">
-            <ProfileCard user={user} />
-          </div>
-        </aside>
-
-        {/* Center Feed */}
-        <section className="col-span-12 md:col-span-6 space-y-4">
-          <div className="glass rounded-card p-4">
-            <SearchBar />
-          </div>
-
-          {posts.length === 0 && (
-            <p className="text-center text-sm text-muted">
-              No posts yet
-            </p>
-          )}
-
-          {posts.map((post: any) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              currentUserId={user.id}
-            />
-          ))}
-        </section>
-
-        {/* Right Sidebar */}
-        <aside className="col-span-3 hidden md:block">
-          <div className="glass rounded-card p-4 text-sm text-muted">
-            Suggestions / Ads
-          </div>
-        </aside>
-      </main>
-    </div>
+    <main className="max-w-6xl mx-auto px-4 py-4">
+      <Feed initialPosts={posts} currentUserId={user.id} />
+    </main>
   );
 }

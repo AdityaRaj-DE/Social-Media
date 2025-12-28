@@ -2,94 +2,79 @@
 
 import { useState } from "react";
 
-export default function Comments({
-  postId,
-  comments,
-}: {
-  postId: string;
-  comments: any[];
-}) {
+export default function Comments({ postId }: { postId: string }) {
+  const [comments, setComments] = useState<any[]>([]);
   const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const addComment = async () => {
+  const submit = async () => {
     if (!text.trim()) return;
 
-    await fetch(`/api/posts/${postId}/comments`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    });
+    const tempId = `temp-${Date.now()}`;
 
-    window.location.reload();
-  };
+    const optimisticComment = {
+      id: tempId,
+      text,
+      pending: true,
+      user: { name: "You" }, // placeholder
+    };
 
-  const deleteComment = async (commentId: string) => {
-    await fetch(
-      `/api/posts/${postId}/comments/${commentId}`,
-      { method: "DELETE" }
-    );
-    window.location.reload();
+    setComments((prev) => [optimisticComment, ...prev]);
+    setText("");
+
+    try {
+      const res = await fetch(`/api/posts/${postId}/comments`, {
+        method: "POST",
+        body: JSON.stringify({ text }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) throw new Error("Comment failed");
+
+      const saved = await res.json();
+
+      // replace temp with real comment
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === tempId ? saved : c
+        )
+      );
+    } catch (e) {
+      // rollback
+      setComments((prev) =>
+        prev.filter((c) => c.id !== tempId)
+      );
+      alert("Failed to post comment");
+    }
   };
 
   return (
-    <div className="pt-3 space-y-3">
+    <div className="space-y-2">
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Write a comment…"
+        className="w-full border border-glass rounded px-3 py-1 text-sm"
+      />
+
+      <button
+        onClick={submit}
+        disabled={loading}
+        className="text-sm text-accent"
+      >
+        Post
+      </button>
+
       {comments.map((c) => (
         <div
           key={c.id}
-          className="flex justify-between items-start text-sm"
+          className={`text-sm ${
+            c.pending ? "opacity-60 italic" : ""
+          }`}
         >
-          <p className="text-text">
-            <span className="font-semibold">
-              {c.user.name}
-            </span>{" "}
-            <span className="text-muted">{c.text}</span>
-          </p>
-  
-          {c.isOwner && (
-            <button
-              onClick={() => deleteComment(c.id)}
-              className="text-xs text-red-500 hover:underline"
-            >
-              Delete
-            </button>
-          )}
+          <strong>{c.user.name}</strong>: {c.text}
         </div>
       ))}
-  
-      {/* Add comment */}
-      <div className="flex gap-2 pt-2">
-        <input
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Add a comment…"
-          className="
-            flex-1
-            rounded-lg
-            bg-transparent
-            border border-glass
-            px-3 py-2
-            text-sm
-            placeholder:text-muted
-            outline-none
-            focus:ring-2 focus:ring-accent/40
-          "
-        />
-  
-        <button
-          onClick={addComment}
-          className="
-            rounded-pill
-            bg-accent
-            px-4 py-2
-            text-sm font-medium
-            text-white
-            hover:bg-accent-600
-            transition
-          "
-        >
-          Post
-        </button>
-      </div>
     </div>
-  );  
+  );
 }
