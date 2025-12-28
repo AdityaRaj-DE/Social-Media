@@ -6,6 +6,7 @@ import Image from "next/image";
 import LikeButton from "./LikeButton";
 import Comments from "./Comments";
 import { timeAgo } from "@/utils/timeAgo";
+import Modal from "./Modal";
 
 export default function PostCard({
   post,
@@ -15,6 +16,10 @@ export default function PostCard({
   currentUserId: string;
 }) {
   const [showComments, setShowComments] = useState(false);
+
+  const [commentsCount, setCommentsCount] = useState(
+    post.commentsCount ?? 0
+  );
 
   const likedByUser =
     Array.isArray(post.likes) && currentUserId
@@ -78,30 +83,42 @@ export default function PostCard({
         />
 
         <button
-          onClick={() => setShowComments((v) => !v)}
+          onClick={() => setShowComments(true)}
           className="flex items-center gap-1 text-sm text-muted hover:text-text transition"
         >
           💬
-          <span>{post.commentsCount ?? 0}</span>
+          <span>{commentsCount}</span>
         </button>
       </div>
 
-      {/* COUNTS (SECONDARY INFO) */}
-      {(post.likes.length > 0 || post.commentsCount > 0) && (
+      {/* SECONDARY COUNTS */}
+      {(post.likes.length > 0 || commentsCount > 0) && (
         <div className="text-xs text-muted flex gap-4">
           {post.likes.length > 0 && (
             <span>{post.likes.length} likes</span>
           )}
-          {post.commentsCount > 0 && (
-            <span>{post.commentsCount} comments</span>
+          {commentsCount > 0 && (
+            <span>{commentsCount} comments</span>
           )}
         </div>
       )}
 
-      {/* COMMENTS (LAZY) */}
-      {showComments && (
-        <Comments postId={post.id} />
-      )}
+      {/* COMMENTS MODAL (ONLY PLACE COMMENTS EXIST) */}
+      <Modal
+        open={showComments}
+        onClose={() => setShowComments(false)}
+      >
+        <Comments
+          postId={post.id}
+          currentUserId={currentUserId}
+          onNewComment={() =>
+            setCommentsCount((c) => c + 1)
+          }
+          onDeleteComment={() =>
+            setCommentsCount((c) => c - 1)
+          }
+        />
+      </Modal>
     </div>
   );
 }

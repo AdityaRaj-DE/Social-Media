@@ -2,35 +2,70 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Post from "@/models/Post";
 import { getCurrentUser } from "@/lib/auth";
-import { Types } from "mongoose";
+
+// /api/posts/[postId]/comments/route.ts
+
+const LIMIT = 10;
+
+export async function GET(req: Request, context: { params: Promise<{ postId: string }> }) {
+  const { postId } = await context.params;
+  const { searchParams } = new URL(req.url);
+  const cursor = searchParams.get("cursor");
+
+  await connectDB();
+
+  const post = await Post.findById(postId)
+    .populate({
+      path: "comments.user",
+      select: "name profilePic",
+    })
+    .lean();
+
+  const comments = post.comments
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .filter(c => !cursor || c._id.toString() < cursor)
+    .slice(0, LIMIT);
+
+  return NextResponse.json({
+    comments: comments.map(c => ({
+      id: c._id.toString(),
+      text: c.text,
+      createdAt: c.createdAt,
+      user: {
+        id: c.user._id.toString(),
+        name: c.user.name,
+        profilePic: c.user.profilePic,
+      },
+    })),
+    nextCursor:
+      comments.length === LIMIT
+        ? comments[comments.length - 1]._id.toString()
+        : null,
+  });
+}
+
 
 export async function POST(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ postId: string }> }
 ) {
   try {
-    const { id: postId } = await context.params;
-
-    const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const { postId } = await context.params; // ✅ FIX
 
     const { text } = await req.json();
-    if (!text?.trim()) {
+
+    if (!text || !text.trim()) {
       return NextResponse.json(
         { error: "Comment text required" },
         { status: 400 }
       );
     }
 
-    if (!Types.ObjectId.isValid(postId)) {
+    const user = await getCurrentUser();
+    if (!user) {
       return NextResponse.json(
-        { error: "Invalid post id" },
-        { status: 400 }
+        { error: "Unauthorized" },
+        { status: 401 }
       );
     }
 
@@ -44,18 +79,31 @@ export async function POST(
       );
     }
 
-    post.comments.push({
-      user: user._id,
+    const comment = {
       text,
-    });
+      user: user._id,
+      createdAt: new Date(),
+    };
 
+    post.comments.unshift(comment);
     await post.save();
 
-    return NextResponse.json({ success: true });
+    const saved = post.comments[0];
+
+    return NextResponse.json({
+      id: saved._id.toString(),
+      text: saved.text,
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        profilePic: user.profilePic,
+      },
+      createdAt: saved.createdAt,
+    });
   } catch (err) {
-    console.error("ADD COMMENT ERROR:", err);
+    console.error("CREATE COMMENT ERROR", err);
     return NextResponse.json(
-      { error: "Server error" },
+      { error: "Failed to create comment" },
       { status: 500 }
     );
   }
