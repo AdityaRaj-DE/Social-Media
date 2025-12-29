@@ -7,7 +7,21 @@ import { getCurrentUser } from "@/lib/auth";
 
 const LIMIT = 10;
 
-export async function GET(req: Request, context: { params: Promise<{ postId: string }> }) {
+type LeanComment = {
+  _id: any;
+  text: string;
+  createdAt: Date;
+  user: {
+    _id: any;
+    name: string;
+    profilePic?: string;
+  };
+};
+
+export async function GET(
+  req: Request,
+  context: { params: Promise<{ postId: string }> }
+) {
   const { postId } = await context.params;
   const { searchParams } = new URL(req.url);
   const cursor = searchParams.get("cursor");
@@ -21,13 +35,26 @@ export async function GET(req: Request, context: { params: Promise<{ postId: str
     })
     .lean();
 
-  const comments = post.comments
-    .sort((a, b) => b.createdAt - a.createdAt)
-    .filter(c => !cursor || c._id.toString() < cursor)
+  if (!post) {
+    return NextResponse.json(
+      { error: "Post not found" },
+      { status: 404 }
+    );
+  }
+
+  const comments = (post.comments as LeanComment[])
+    .sort(
+      (a, b) =>
+        b.createdAt.getTime() - a.createdAt.getTime()
+    )
+    .filter(
+      (c) =>
+        !cursor || c._id.toString() < cursor
+    )
     .slice(0, LIMIT);
 
   return NextResponse.json({
-    comments: comments.map(c => ({
+    comments: comments.map((c) => ({
       id: c._id.toString(),
       text: c.text,
       createdAt: c.createdAt,
@@ -43,6 +70,7 @@ export async function GET(req: Request, context: { params: Promise<{ postId: str
         : null,
   });
 }
+
 
 
 export async function POST(
