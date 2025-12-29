@@ -17,9 +17,10 @@ export default function PostCard({
 }) {
   const [showComments, setShowComments] = useState(false);
 
-  const [commentsCount, setCommentsCount] = useState(
+  const [commentsCount, setCommentsCount] = useState<number>(
     post.commentsCount ?? 0
   );
+  
 
   const likedByUser =
     Array.isArray(post.likes) && currentUserId
