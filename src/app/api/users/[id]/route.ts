@@ -4,11 +4,14 @@ import Post from "../../../../models/Post";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   await connectDB();
 
-  const user = await User.findById(params.id).select("-password");
+  // 🔥 MUST await params
+  const { id } = await context.params;
+
+  const user = await User.findById(id).select("-password");
   if (!user) {
     return Response.json({ error: "User not found" }, { status: 404 });
   }

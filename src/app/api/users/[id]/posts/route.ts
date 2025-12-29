@@ -5,12 +5,13 @@ import User from "@/models/User";
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
 
-    const userId = params.id;
+    // 🔥 MUST await params in App Router
+    const { id: userId } = await context.params;
 
     // Validate user exists
     const user = await User.findById(userId);
@@ -24,7 +25,7 @@ export async function GET(
     // Fetch ONLY this user's posts
     const posts = await Post.find({ user: userId })
       .sort({ createdAt: -1 })
-      .populate("user", "id name profilePic");
+      .populate("user", "name profilePic");
 
     return NextResponse.json(posts);
   } catch (err) {
