@@ -6,11 +6,11 @@ import { Types } from "mongoose";
 
 export async function DELETE(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ postId: string }> }
 ) {
   try {
-    // 1️⃣ Get post id
-    const { id: postId } = await context.params;
+    // 1️⃣ Get postId (MUST match folder name)
+    const { postId } = await context.params;
 
     if (!Types.ObjectId.isValid(postId)) {
       return NextResponse.json(
@@ -40,7 +40,7 @@ export async function DELETE(
       );
     }
 
-    // 5️⃣ OWNERSHIP CHECK (CRITICAL)
+    // 5️⃣ OWNERSHIP CHECK
     if (post.user.toString() !== user._id.toString()) {
       return NextResponse.json(
         { error: "Forbidden" },
