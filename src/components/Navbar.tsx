@@ -1,24 +1,28 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Home,
   Search,
   PlusSquare,
-  User,
   Settings,
 } from "lucide-react";
+import type { NavbarUser } from "@/types/user";
+
+type NavbarProps = {
+  user: NavbarUser;
+};
 
 const navItems = [
   { href: "/", icon: Home, label: "Home" },
   { href: "/search", icon: Search, label: "Search" },
   { href: "/create-post", icon: PlusSquare, label: "Create", primary: true },
-  { href: "/profile", icon: User, label: "Profile" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
-export default function BottomNav() {
+export default function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
 
   return (
@@ -34,18 +38,7 @@ export default function BottomNav() {
                 href={href}
                 className="flex items-center justify-center -mt-6"
               >
-                <div
-                  className="
-            h-12 w-12
-            rounded-full
-            bg-accent
-            text-white
-            flex items-center justify-center
-            shadow-lg
-            active:scale-95
-            transition
-          "
-                >
+                <div className="h-12 w-12 rounded-full bg-accent text-white flex items-center justify-center shadow-lg active:scale-95 transition">
                   <Icon size={26} />
                 </div>
               </Link>
@@ -56,24 +49,34 @@ export default function BottomNav() {
             <Link
               key={href}
               href={href}
-              className={`relative flex flex-col items-center justify-center text-xs transition-all duration-200
-        ${active ? "text-accent" : "text-muted hover:text-text"}
-      `}
+              className={`flex flex-col items-center text-xs transition
+                ${active ? "text-accent" : "text-muted hover:text-text"}
+              `}
             >
-              <Icon
-                size={22}
-                className={`transition-transform duration-200
-          ${active ? "scale-110 -translate-y-0.5" : ""}
-        `}
-              />
+              <Icon size={22} />
               <span>{label}</span>
-              {active && (
-                <span className="absolute -bottom-1 h-1 w-1 rounded-full bg-accent" />
-              )}
             </Link>
           );
         })}
 
+        {/* PROFILE ICON (USER-DEPENDENT) */}
+        <Link
+          href="/profile"
+          className={`flex flex-col items-center text-xs transition
+            ${pathname === "/profile"
+              ? "text-accent"
+              : "text-muted hover:text-text"}
+          `}
+        >
+          <Image
+            src={user.profilePic || "/default-avatar.png"}
+            alt={user.name}
+            width={22}
+            height={22}
+            className="rounded-full object-cover"
+          />
+          <span>Profile</span>
+        </Link>
       </div>
     </nav>
   );

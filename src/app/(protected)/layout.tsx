@@ -7,10 +7,7 @@ export default async function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const userDoc = await getCurrentUser();
-
-  if (!userDoc) {
-    throw new Error("Unauthorized");
-  }
+  if (!userDoc) throw new Error("Unauthorized");
 
   const user = {
     id: userDoc._id.toString(),
@@ -20,12 +17,9 @@ export default async function ProtectedLayout({
   };
 
   return (
-    <div className="min-h-screen bg-bg text-text">
-      {/* Top Navigation (Desktop / Global) */}
-      <Navbar user={user} />
-
-      {/* Page Content */}
+    <div className="min-h-screen bg-bg text-text pb-14">
       {children}
+      <Navbar user={user} />
     </div>
   );
 }
