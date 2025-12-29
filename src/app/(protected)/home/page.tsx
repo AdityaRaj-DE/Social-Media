@@ -2,7 +2,6 @@ import { connectDB } from "@/lib/db";
 import Post from "@/models/Post";
 import { getCurrentUser } from "@/lib/auth";
 
-import PostCard from "@/components/PostCard";
 import Feed from "@/components/Feed";
 
 export default async function HomePage() {

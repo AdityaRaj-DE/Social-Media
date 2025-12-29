@@ -97,6 +97,7 @@ export default function CreatePostPage() {
           accept="image/*"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
           className="text-sm text-muted"
+          placeholder="image"
         />
   
         {error && (

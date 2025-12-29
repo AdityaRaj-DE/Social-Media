@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import PostCard from "@/components/PostCard";
 import Link from "next/link";
-import Image from "next/image";
+
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -111,6 +110,7 @@ export default function EditProfilePage() {
         />
   
         <input
+        placeholder="image"
           type="file"
           accept="image/*"
           onChange={(e) => setFile(e.target.files?.[0] || null)}

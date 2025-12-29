@@ -5,9 +5,9 @@ import { getCurrentUser } from "@/lib/auth";
 
 export async function POST(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id: targetUserId } = await params;
+  const { id: targetUserId } = await context.params;
 
   const currentUser = await getCurrentUser();
   if (!currentUser) {
