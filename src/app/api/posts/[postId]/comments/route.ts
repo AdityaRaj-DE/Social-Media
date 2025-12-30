@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Post from "@/models/Post";
 import { getCurrentUser } from "@/lib/auth";
+import { Types } from "mongoose";
 
 // /api/posts/[postId]/comments/route.ts
 
@@ -28,19 +29,25 @@ export async function GET(
 
   await connectDB();
 
+  type LeanPostWithComments = {
+    _id: Types.ObjectId;
+    comments: LeanComment[];
+  };
+  
   const post = await Post.findById(postId)
     .populate({
       path: "comments.user",
       select: "name profilePic",
     })
-    .lean();
-
+    .lean<LeanPostWithComments>();
+  
   if (!post) {
     return NextResponse.json(
       { error: "Post not found" },
       { status: 404 }
     );
   }
+  
 
   const comments = (post.comments as LeanComment[])
     .sort(
