@@ -28,7 +28,20 @@ export default async function UserProfilePage({
 
 
   // 1️⃣ Find profile owner
-  const userDoc = await User.findById(id).lean();
+  type LeanUser = {
+    _id: Types.ObjectId;
+    name: string;
+    email: string;
+    age?: number;
+    profilePic?: string;
+    followers: Types.ObjectId[];
+    following: Types.ObjectId[];
+  };
+  
+  const userDoc = await User.findById(id)
+    .select("name email age profilePic followers following")
+    .lean<LeanUser>();
+  
   if (!userDoc) {
     return (
       <div className="p-6 text-center text-gray-600">
