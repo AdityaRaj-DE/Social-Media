@@ -5,7 +5,7 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   const pathname = req.nextUrl.pathname;
 
-  // ✅ Always allow auth pages & auth APIs
+  // Always allow auth pages & auth APIs
   if (
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
@@ -14,12 +14,11 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // ✅ Protect everything else
+  // Protect routes
   if (!token) {
     if (pathname.startsWith("/api")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
@@ -27,5 +26,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:css|js|png|jpg|jpeg|svg|webp)).*)",
+  ],
 };
