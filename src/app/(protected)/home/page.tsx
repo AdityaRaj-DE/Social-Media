@@ -3,6 +3,7 @@ import Post from "@/models/Post";
 import { getCurrentUser } from "@/lib/auth";
 
 import Feed from "@/components/Feed";
+import MobileShell from "@/components/MobileShell";
 
 export default async function HomePage() {
   const userDoc = await getCurrentUser();
@@ -66,8 +67,11 @@ const rawPosts = await Post.find()
 
 
   return (
+    <MobileShell>
+
     <main className="max-w-6xl mx-auto px-4 py-4">
       <Feed initialPosts={posts} currentUserId={user.id} />
     </main>
+    </MobileShell>
   );
 }

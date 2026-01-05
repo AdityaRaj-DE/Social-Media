@@ -1,3 +1,4 @@
+import MobileShell from "@/components/MobileShell";
 import Navbar from "@/components/Navbar";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -17,9 +18,11 @@ export default async function ProtectedLayout({
   };
 
   return (
+    <MobileShell>
     <div className="min-h-screen bg-bg text-text pb-14">
       {children}
       <Navbar user={user} />
     </div>
+    </MobileShell>
   );
 }

@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import Link from "next/link";
 
 import PostCard from "@/components/PostCard";
+import MobileShell from "@/components/MobileShell";
 
 export default async function ProfilePage() {
   const userDoc = await getCurrentUser();
@@ -70,6 +71,7 @@ export default async function ProfilePage() {
 
 
   return (
+    <MobileShell>
     <div className="min-h-screen bg-bg text-text px-4 py-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Profile Header */}
@@ -121,6 +123,7 @@ export default async function ProfilePage() {
         </div>
       </div>
     </div>
+    </MobileShell>
   );
 
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import MobileShell from "@/components/MobileShell";
 
 export default function CreatePostPage() {
   const router = useRouter();
@@ -69,6 +70,8 @@ export default function CreatePostPage() {
   };
 
   return (
+    <MobileShell>
+
     <div className="min-h-screen bg-bg text-text flex justify-center px-4 py-10">
       <div className="glass rounded-card w-full max-w-xl p-6 space-y-4">
         <h1 className="text-xl font-bold">Create Post</h1>
@@ -89,8 +92,8 @@ export default function CreatePostPage() {
             placeholder:text-muted
             outline-none
             focus:ring-2 focus:ring-accent/40
-          "
-        />
+            "
+            />
   
         <input
           type="file"
@@ -98,7 +101,7 @@ export default function CreatePostPage() {
           onChange={(e) => setFile(e.target.files?.[0] || null)}
           className="text-sm text-muted"
           placeholder="image"
-        />
+          />
   
         {error && (
           <p className="text-sm text-red-500">{error}</p>
@@ -108,20 +111,21 @@ export default function CreatePostPage() {
           onClick={submitPost}
           disabled={loading}
           className="
-            w-full
-            rounded-pill
-            bg-accent
-            py-2.5
+          w-full
+          rounded-pill
+          bg-accent
+          py-2.5
             text-sm font-semibold
             text-white
             hover:bg-accent-600
             transition
             disabled:opacity-50
-          "
+            "
         >
           {loading ? "Posting..." : "Post"}
         </button>
       </div>
     </div>
+            </MobileShell>
   );  
 }

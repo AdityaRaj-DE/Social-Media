@@ -1,7 +1,7 @@
-import { connectDB } from "../../../../lib/db";
-import User from "../../../../models/User";
+import { connectDB } from "@/lib/db";
+import User from "@/models/User";
 import bcrypt from "bcryptjs";
-import { signToken } from "../../../../lib/auth";
+import { signToken } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -9,37 +9,48 @@ export async function POST(req: Request) {
     const { email, password } = await req.json();
 
     if (!email || !password) {
-      return NextResponse.json({ error: "Missing credentials" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing credentials" },
+        { status: 400 }
+      );
     }
 
     await connectDB();
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("_id password");
     if (!user) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+      // Early exit, no bcrypt
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      );
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      );
     }
 
     const token = signToken(user._id.toString());
-    const res = NextResponse.json({
-      success: true,
-      token, // 👈 add this
-    });
-    
+
+    const res = NextResponse.json({ success: true });
 
     res.cookies.set("token", token, {
       httpOnly: true,
       sameSite: "lax",
+      secure: true,
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
 
     return res;
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Server error" },
+      { status: 500 }
+    );
   }
 }
