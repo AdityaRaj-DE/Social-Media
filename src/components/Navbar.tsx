@@ -18,7 +18,7 @@ type NavbarProps = {
 const navItems = [
   { href: "/", icon: Home, label: "Home" },
   { href: "/search", icon: Search, label: "Search" },
-  { href: "/create-post", icon: PlusSquare, label: "Create" },
+  { href: "/create-post", icon: PlusSquare, label: "Create", primary: false },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
