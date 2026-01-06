@@ -18,7 +18,7 @@ type NavbarProps = {
 const navItems = [
   { href: "/", icon: Home, label: "Home" },
   { href: "/search", icon: Search, label: "Search" },
-  { href: "/create-post", icon: PlusSquare, label: "Create", primary: true },
+  { href: "/create-post", icon: PlusSquare, label: "Create" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
@@ -54,7 +54,7 @@ export default function Navbar({ user }: NavbarProps) {
               `}
             >
               <Icon size={22} />
-              <span>{label}</span>
+              {/* <span>{label}</span> */}
             </Link>
           );
         })}
@@ -75,7 +75,7 @@ export default function Navbar({ user }: NavbarProps) {
             height={22}
             className="rounded-full object-cover"
           />
-          <span>Profile</span>
+          {/* <span>Profile</span> */}
         </Link>
       </div>
     </nav>
