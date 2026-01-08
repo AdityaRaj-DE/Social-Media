@@ -26,7 +26,7 @@ export default function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden glass border-t border-glass">
+    <nav className="fixed bg-bg bottom-0 left-0 right-0 z-40 md:hidden border-t border-glass">
       <div className="flex justify-around items-center h-14">
         {navItems.map(({ href, icon: Icon, label, primary }) => {
           const active = pathname === href;
@@ -38,7 +38,7 @@ export default function Navbar({ user }: NavbarProps) {
                 href={href}
                 className="flex items-center justify-center -mt-6"
               >
-                <div className="h-12 w-12 rounded-full bg-accent text-white flex items-center justify-center shadow-lg active:scale-95 transition">
+                <div className="h-12 w-12 rounded-full bg-accent text-text flex items-center justify-center shadow-lg active:scale-95 transition">
                   <Icon size={26} />
                 </div>
               </Link>

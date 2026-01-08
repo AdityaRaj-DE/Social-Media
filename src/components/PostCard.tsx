@@ -31,9 +31,9 @@ export default function PostCard({
       : false;
 
   return (
-    <div className="glass rounded-card p-4 space-y-3">
+    <div className="bg-bg rounded-card p-4 space-y-3">
       {/* HEADER */}
-      <div className="flex items-center justify-between">
+      <div className="flex text-text items-center justify-between">
         <Link
           href={
             post.user.id === currentUserId

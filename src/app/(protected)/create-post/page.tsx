@@ -73,7 +73,7 @@ export default function CreatePostPage() {
     <MobileShell>
 
     <div className="min-h-screen mt-8 bg-bg text-text flex justify-center px-4 py-10">
-      <div className="glass rounded-card w-full max-w-xl p-6 space-y-4">
+      <div className="bg-bg rounded-card w-full max-w-xl p-6 space-y-4">
         <h1 className="text-xl font-bold">Create Post</h1>
   
         <textarea
@@ -86,7 +86,7 @@ export default function CreatePostPage() {
             resize-none
             rounded-lg
             bg-transparent
-            border border-glass
+            border border-bg-bg
             px-3 py-2
             text-sm
             placeholder:text-muted
