@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { X } from "lucide-react";
 
 export default function Modal({
   open,
@@ -14,6 +15,19 @@ export default function Modal({
   const startY = useRef<number | null>(null);
   const [offset, setOffset] = useState(0);
 
+  // 🔒 LOCK BACKGROUND SCROLL
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   if (!open) return null;
 
   const onTouchStart = (e: React.TouchEvent) => {
@@ -23,22 +37,17 @@ export default function Modal({
   const onTouchMove = (e: React.TouchEvent) => {
     if (startY.current === null) return;
     const diff = e.touches[0].clientY - startY.current;
-
-    if (diff > 0) {
-      setOffset(diff);
-    }
+    if (diff > 0) setOffset(diff);
   };
 
   const onTouchEnd = () => {
-    if (offset > 120) {
-      onClose(); // 🔥 swipe-down close
-    }
+    if (offset > 120) onClose();
     setOffset(0);
     startY.current = null;
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-center">
+    <div className="fixed inset-0 bottom-20 z-50 bg-black/50 flex items-end justify-center">
       <div
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
@@ -46,14 +55,27 @@ export default function Modal({
         style={{ transform: `translateY(${offset}px)` }}
         className="
           bg-bg w-full md:max-w-lg
-          rounded-t-2xl md:rounded-2xl
-          p-4 max-h-[80vh] overflow-y-auto
+          rounded-t-2xl
+          max-h-[85vh]
+          flex flex-col
           transition-transform
         "
       >
-        {/* drag handle */}
-        <div className="w-10 h-1 bg-muted rounded mx-auto mb-2" />
-        {children}
+        {/* Drag handle */}
+        <div className="w-10 h-1 bg-muted rounded mx-auto mt-2" />
+
+        {/* Header */}
+        <div className="flex  bg-black items-center justify-between px-4 py-3 border-b">
+          <span className="text-sm font-semibold">Comments</span>
+          <button title="close" onClick={onClose} className="p-1">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="flex-1 bg-black overflow-y-auto">
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -69,7 +69,7 @@ const rawPosts = await Post.find()
   return (
     <MobileShell>
 
-    <main className="max-w-6xl mx-auto px-4 py-4">
+    <main className="max-w-6xl mt-8 mx-auto px-4 py-4">
       <Feed initialPosts={posts} currentUserId={user.id} />
     </main>
     </MobileShell>

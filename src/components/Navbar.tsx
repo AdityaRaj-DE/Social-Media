@@ -26,7 +26,7 @@ export default function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass border-t border-glass">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden glass border-t border-glass">
       <div className="flex justify-around items-center h-14">
         {navItems.map(({ href, icon: Icon, label, primary }) => {
           const active = pathname === href;

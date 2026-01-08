@@ -264,12 +264,12 @@ export default function Feed({ initialPosts, currentUserId }: any) {
                 )}
             </div>
 
-            <button
+            {/* <button
                 onClick={refresh}
                 className="text-sm text-muted hover:text-accent"
             >
                 {loading ? "Refreshing…" : "Refresh"}
-            </button>
+            </button> */}
             {!isOnline && (
                 <div className="rounded-lg bg-yellow-500/10 text-yellow-600 text-xs px-3 py-2">
                     You’re offline. Showing cached content.

@@ -18,9 +18,12 @@ export default function PostCard({
   const [showComments, setShowComments] = useState(false);
 
   const [commentsCount, setCommentsCount] = useState<number>(
-    post.commentsCount ?? 0
+    Array.isArray(post.comments)
+      ? post.comments.length
+      : post.commentsCount ?? 0
   );
   
+
 
   const likedByUser =
     Array.isArray(post.likes) && currentUserId
@@ -109,17 +112,24 @@ export default function PostCard({
         open={showComments}
         onClose={() => setShowComments(false)}
       >
-        <Comments
-          postId={post.id}
-          currentUserId={currentUserId}
-          onNewComment={() =>
-            setCommentsCount((c) => c + 1)
-          }
-          onDeleteComment={() =>
-            setCommentsCount((c) => c - 1)
-          }
-        />
+        <div className="flex flex-col h-full">
+          {/* Comments list */}
+          <div className="flex-1 overflow-y-auto px-4 py-3">
+            <Comments
+              postId={post.id}
+              currentUserId={currentUserId}
+              onNewComment={() =>
+                setCommentsCount((c) => c + 1)
+              }
+              onDeleteComment={() =>
+                setCommentsCount((c) => c - 1)
+              }
+            />
+          </div>
+        </div>
       </Modal>
+
+
     </div>
   );
 }
