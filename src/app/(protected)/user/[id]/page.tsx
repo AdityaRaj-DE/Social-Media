@@ -122,7 +122,7 @@ export default async function UserProfilePage({
   }));
 
   return (
-    <div className="min-h-screen bg-bg text-text px-4 py-6">
+    <div className="min-h-screen bg-bg mt-8 text-text px-4 py-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Profile Header */}
         <div className="glass rounded-card p-6 flex items-center gap-6">

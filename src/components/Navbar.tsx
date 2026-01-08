@@ -19,7 +19,7 @@ const navItems = [
   { href: "/", icon: Home, label: "Home" },
   { href: "/search", icon: Search, label: "Search" },
   { href: "/create-post", icon: PlusSquare, label: "Create", primary: false },
-  { href: "/settings", icon: Settings, label: "Settings" },
+  { href: "/setting", icon: Settings, label: "Settings" },
 ];
 
 export default function Navbar({ user }: NavbarProps) {
