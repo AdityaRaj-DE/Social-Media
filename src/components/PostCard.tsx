@@ -31,9 +31,9 @@ export default function PostCard({
       : false;
 
   return (
-    <div className="bg-bg rounded-card p-4 space-y-3">
+    <div className="bg-white dark:bg-black rounded-card p-4 space-y-3">
       {/* HEADER */}
-      <div className="flex text-text items-center justify-between">
+      <div className="flex text-black dark:text-white items-center justify-between">
         <Link
           href={
             post.user.id === currentUserId
@@ -50,10 +50,10 @@ export default function PostCard({
             className="rounded-full object-cover"
           />
           <div className="flex flex-col leading-tight">
-            <span className="text-sm font-semibold text-text">
+            <span className="text-sm font-semibold text-black dark:text-white">
               {post.user.name}
             </span>
-            <span className="text-xs text-muted">
+            <span className="text-xs text-black dark:text-white">
               {timeAgo(post.createdAt)}
             </span>
           </div>
@@ -62,7 +62,7 @@ export default function PostCard({
 
       {/* CONTENT */}
       {post.content && (
-        <p className="text-sm leading-relaxed text-text">
+        <p className="text-sm leading-relaxed text-black dark:text-white">
           {post.content}
         </p>
       )}
@@ -88,7 +88,7 @@ export default function PostCard({
 
         <button
           onClick={() => setShowComments(true)}
-          className="flex items-center gap-1 text-sm text-muted hover:text-text transition"
+          className="flex items-center gap-1 text-sm text-black dark:text-white hover:text-black dark:text-white transition"
         >
           💬
           <span>{commentsCount}</span>
@@ -97,7 +97,7 @@ export default function PostCard({
 
       {/* SECONDARY COUNTS */}
       {(post.likes.length > 0 || commentsCount > 0) && (
-        <div className="text-xs text-muted flex gap-4">
+        <div className="text-xs text-black dark:text-white flex gap-4">
           {post.likes.length > 0 && (
             <span>{post.likes.length} likes</span>
           )}

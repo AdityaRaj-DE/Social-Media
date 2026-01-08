@@ -127,7 +127,7 @@ export default function Comments({
       {hasMore && (
         <button
           onClick={loadComments}
-          className="text-xs text-accent mb-2"
+          className="text-xs text-black dark:text-white mb-2"
         >
           Load older comments
         </button>
@@ -138,12 +138,12 @@ export default function Comments({
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Write a comment…"
-        className="w-full border border-glass rounded px-3 py-2 text-sm"
+        className="w-full border  text-black dark:text-white border-glass rounded px-3 py-2 text-sm"
       />
 
       <button
         onClick={submit}
-        className="text-sm text-accent"
+        className="text-sm text-black dark:text-white"
       >
         Post
       </button>
@@ -151,7 +151,7 @@ export default function Comments({
       {comments.map((c) => (
         <div
           key={c.id}
-          className="flex justify-between items-start text-sm"
+          className="flex text-black dark:text-white justify-between items-start text-sm"
         >
           <div>
             <strong>{c.user.name}</strong>: {c.text}

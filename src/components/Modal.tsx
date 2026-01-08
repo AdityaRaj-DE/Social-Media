@@ -47,14 +47,14 @@ export default function Modal({
   };
 
   return (
-    <div className="fixed inset-0 bottom-20 z-50 bg-black/50 flex items-end justify-center">
+    <div className="fixed inset-0 bottom-20 z-50 dark:bg-black/50 flex items-end justify-center">
       <div
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         style={{ transform: `translateY(${offset}px)` }}
         className="
-          bg-bg w-full md:max-w-lg
+          bg-white dark:bg-black w-full md:max-w-lg
           rounded-t-2xl
           max-h-[85vh]
           flex flex-col
@@ -65,15 +65,15 @@ export default function Modal({
         <div className="w-10 h-1 bg-muted rounded mx-auto mt-2" />
 
         {/* Header */}
-        <div className="flex  bg-black items-center justify-between px-4 py-3 border-b">
-          <span className="text-sm font-semibold">Comments</span>
+        <div className="flex  dark:bg-black bg-white items-center justify-between px-4 py-3 border-b">
+          <span className="text-sm text-black dark:text-white font-semibold">Comments</span>
           <button title="close" onClick={onClose} className="p-1">
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 text-black dark:text-white" />
           </button>
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 bg-black overflow-y-auto">
+        <div className="flex-1 dark:bg-black bg-white overflow-y-auto">
           {children}
         </div>
       </div>

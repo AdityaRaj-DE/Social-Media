@@ -48,8 +48,8 @@ export default function LikeButton({
   return (
     <button
       onClick={toggleLike}
-      className={`flex items-center gap-1 text-sm transition
-        ${liked ? "text-accent" : "text-muted hover:text-text"}
+      className={`flex items-center gap-1 text-sm text-black dark:text-white transition
+        ${liked ? "text-black dark:text-white" : "text-muted hover:text-text"}
       `}
     >
       <Heart
